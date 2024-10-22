@@ -32,13 +32,13 @@ public class Player : MonoBehaviour, IDamageble
     private void Update()
     {
         if (IsDead)
-        {
-            _agent.isStopped = true;
-            _agent.velocity = Vector3.zero;
-            _agent.ResetPath();
             return;
-        }
 
+        UpdateMovementState();
+    }
+
+    public void UpdateMovementState()
+    {
         if (!_agent.pathPending && _agent.remainingDistance <= _agent.stoppingDistance)
         {
             if (!_agent.hasPath || _agent.velocity.sqrMagnitude == 0f)
@@ -58,6 +58,13 @@ public class Player : MonoBehaviour, IDamageble
             _idleTimer = 0f;
             _isPatrolling = false;
         }
+    }
+
+    private void AgentStop()
+    {
+        _agent.isStopped = true;
+        _agent.velocity = Vector3.zero;
+        _agent.ResetPath();
     }
 
     private void MoveToTargetPoint(Vector3 point)
@@ -113,6 +120,7 @@ public class Player : MonoBehaviour, IDamageble
         if (Health.HealthValue <= 0)
         {
             IsDead = true;
+            AgentStop();
             _playerView.Death();
         }
 

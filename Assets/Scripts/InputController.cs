@@ -10,7 +10,6 @@ public class InputController : MonoBehaviour
     
     public static event Action<Vector3> OnClick;
 
-
     void Update()
     {
         if (Input.GetMouseButtonDown(_lefClick))

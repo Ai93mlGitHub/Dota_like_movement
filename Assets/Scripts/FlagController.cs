@@ -6,7 +6,6 @@ public class FlagController : MonoBehaviour
     
     private GameObject _currentFlag;
 
-
     void Start() => InputController.OnClick += SetFlagPosition;
 
     private void OnDestroy() =>InputController.OnClick -= SetFlagPosition;

@@ -556,7 +556,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _healthValue: 100
-  _idleTimeThreshold: 5
+  _idleTimeThreshold: 2
   _patrolRadius: 10
   _maxNavMeshSampleDistance: 2
   _attemptOfPatrol: 10
@@ -710,6 +710,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 764332311729828444, guid: 9f53a3628d796814bbe80ef17aaa4da6,
+        type: 3}
+      propertyPath: _explosionDelay
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 764332311729828444, guid: 9f53a3628d796814bbe80ef17aaa4da6,
         type: 3}
       propertyPath: _explosionRadius
@@ -3318,6 +3323,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 764332311729828444, guid: 9f53a3628d796814bbe80ef17aaa4da6,
         type: 3}
+      propertyPath: _explosionDelay
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 764332311729828444, guid: 9f53a3628d796814bbe80ef17aaa4da6,
+        type: 3}
       propertyPath: _explosionRadius
       value: 3
       objectReference: {fileID: 0}
@@ -4741,6 +4751,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 764332311729828444, guid: 9f53a3628d796814bbe80ef17aaa4da6,
+        type: 3}
+      propertyPath: _explosionDelay
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 764332311729828444, guid: 9f53a3628d796814bbe80ef17aaa4da6,
         type: 3}
       propertyPath: _explosionRadius

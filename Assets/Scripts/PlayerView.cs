@@ -12,7 +12,7 @@ public class PlayerView : MonoBehaviour
     private void Start()
     {
         if (_animator == null)
-            Debug.Log("Animator не найден!");
+            Debug.Log("Добавь аниматор!");
     }
 
     public void StartRunning() => _animator.SetBool(IsRunningKey, true);
