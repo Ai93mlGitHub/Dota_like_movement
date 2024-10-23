@@ -50,8 +50,10 @@ public class Landmine : MonoBehaviour
 
         foreach (Collider collider in colliders)
         {
-            if (collider.gameObject.GetComponent<IDamageble>() != null)
-                collider.gameObject.GetComponent<Player>().TakeDamage(_damage);
+            IDamageble damageTarget = collider.gameObject.GetComponent<IDamageble>();
+
+            if (damageTarget != null)
+                damageTarget.TakeDamage(_damage);
         }
 
         if (_explosionVFXPrefab != null)

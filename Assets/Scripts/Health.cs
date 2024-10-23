@@ -16,7 +16,7 @@ public class Health
             HealthValue += value;
         else
             HealthValue = 0;
-
+    
         HealthChanged?.Invoke(HealthValue);
     }
 }
