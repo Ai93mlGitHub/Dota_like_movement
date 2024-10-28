@@ -1,18 +1,22 @@
+using System.Collections;
 using UnityEngine;
 
-public class PlayerView : MonoBehaviour
+public class PlayerView
 {
-    [SerializeField] private Animator _animator;
-
+    private Animator _animator;
+    private ParticleSystem _jetParticles;
+    
     private readonly int IsRunningKey = Animator.StringToHash("IsRunning");
     private readonly int IsDeathKey = Animator.StringToHash("IsDeath");
+    private readonly int IsJumping = Animator.StringToHash("IsJumping");
     private readonly int HitKey = Animator.StringToHash("Hit");
     private readonly int InjuredLayer = 1;
 
-    private void Start()
+
+    public PlayerView(Animator animator, ParticleSystem particles)
     {
-        if (_animator == null)
-            Debug.Log("Добавь аниматор!");
+        _animator = animator;
+        _jetParticles = particles;
     }
 
     public void StartRunning() => _animator.SetBool(IsRunningKey, true);
@@ -22,6 +26,18 @@ public class PlayerView : MonoBehaviour
     public void Death() => _animator.SetBool(IsDeathKey, true);
 
     public void Hit() => _animator.SetTrigger(HitKey);
+
+    public void JumpByNavmeshLink()
+    {
+        _animator.SetBool(IsJumping, true);
+        _jetParticles.Play();
+    }
+
+    public void StopJumpByNavMesh()
+    {
+        _animator.SetBool(IsJumping, false);
+        _jetParticles.Stop();
+    } 
 
     public void SwitchLayerToInjured() => _animator.SetLayerWeight(InjuredLayer, 1);
 

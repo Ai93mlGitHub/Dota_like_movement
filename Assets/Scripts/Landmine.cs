@@ -1,14 +1,12 @@
 using UnityEngine;
 
 [RequireComponent(typeof(SphereCollider))]
-
 public class Landmine : MonoBehaviour
 {
     [SerializeField] private float _activationRadius = 5f;
     [SerializeField] private float _explosionRadius = 3f;
     [SerializeField] private float _explosionDelay = 2f;
     [SerializeField] private int _damage = 50;
-    [SerializeField] private LayerMask _ignoredLayers;
     [SerializeField] private ParticleSystem _explosionVFXPrefab;
 
     private bool _isActivated = false;
@@ -21,6 +19,8 @@ public class Landmine : MonoBehaviour
         _sphereCollider = GetComponent<SphereCollider>();
         _sphereCollider.isTrigger = true;
         _sphereCollider.radius = _activationRadius;
+
+        // Ќастройте слои игнорировани€ в компоненте SphereCollider вручную через инспектор
     }
 
     private void Update()
@@ -36,9 +36,6 @@ public class Landmine : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (((1 << other.gameObject.layer) & _ignoredLayers) != 0)
-            return;
-
         if (!_isActivated)
             _isActivated = true;
     }

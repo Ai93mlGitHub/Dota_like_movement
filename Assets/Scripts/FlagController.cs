@@ -3,12 +3,13 @@ using UnityEngine;
 public class FlagController : MonoBehaviour
 {
     [SerializeField] private GameObject _flagPrefab;
+    [SerializeField] private InputController _inputController;
     
     private GameObject _currentFlag;
 
-    void Start() => InputController.OnClick += SetFlagPosition;
+    void Start() => _inputController.OnNavMeshPointSelected += SetFlagPosition;
 
-    private void OnDestroy() =>InputController.OnClick -= SetFlagPosition;
+    private void OnDestroy() => _inputController.OnNavMeshPointSelected -= SetFlagPosition;
 
     private void SetFlagPosition(Vector3 point)
     {

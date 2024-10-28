@@ -6,28 +6,33 @@ public class InputController : MonoBehaviour
 {
     [SerializeField] private float _maxDistanceToNavMesh = 1.0f;
 
-    private int _lefClick = 0;
-    
-    public static event Action<Vector3> OnClick;
+    private int _leftClick = 0;
+
+    public event Action<Vector3> OnNavMeshPointSelected;
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(_lefClick))
+        if (Input.GetMouseButtonDown(_leftClick))
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
+            Vector3? navMeshPoint = GetNavMeshPoint();
 
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity, ~0, QueryTriggerInteraction.Ignore))
+            if (navMeshPoint.HasValue)
             {
-                if (hit.collider != null)
-                {
-                    Vector3 targetPoint = hit.point;
-                    NavMeshHit navMeshHit;
-
-                    if (NavMesh.SamplePosition(targetPoint, out navMeshHit, _maxDistanceToNavMesh, NavMesh.AllAreas))
-                        OnClick?.Invoke(navMeshHit.position);
-                }
+                OnNavMeshPointSelected?.Invoke(navMeshPoint.Value);
             }
         }
+    }
+
+    private Vector3? GetNavMeshPoint()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, ~0, QueryTriggerInteraction.Ignore))
+        {
+            if (NavMesh.SamplePosition(hit.point, out NavMeshHit navMeshHit, _maxDistanceToNavMesh, NavMesh.AllAreas))
+            {
+                return navMeshHit.position;
+            }
+        }
+        return null;
     }
 }
