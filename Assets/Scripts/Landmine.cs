@@ -1,13 +1,15 @@
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(SphereCollider))]
 public class Landmine : MonoBehaviour
 {
+    public event Action<Vector3, Quaternion> OnExplode;
+
     [SerializeField] private float _activationRadius = 5f;
     [SerializeField] private float _explosionRadius = 3f;
     [SerializeField] private float _explosionDelay = 2f;
     [SerializeField] private int _damage = 50;
-    [SerializeField] private ParticleSystem _explosionVFXPrefab;
 
     private bool _isActivated = false;
     private bool _isExploded = false;
@@ -19,8 +21,6 @@ public class Landmine : MonoBehaviour
         _sphereCollider = GetComponent<SphereCollider>();
         _sphereCollider.isTrigger = true;
         _sphereCollider.radius = _activationRadius;
-
-        // Настройте слои игнорирования в компоненте SphereCollider вручную через инспектор
     }
 
     private void Update()
@@ -53,8 +53,7 @@ public class Landmine : MonoBehaviour
                 damageTarget.TakeDamage(_damage);
         }
 
-        if (_explosionVFXPrefab != null)
-            Instantiate(_explosionVFXPrefab, gameObject.transform.position, transform.rotation);
+        OnExplode?.Invoke(transform.position, transform.rotation); // Вызов события взрыва
 
         Destroy(gameObject);
     }

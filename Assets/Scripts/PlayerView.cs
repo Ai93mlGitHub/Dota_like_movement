@@ -1,27 +1,58 @@
-using System.Collections;
 using UnityEngine;
 
-public class PlayerView
+public class PlayerView : MonoBehaviour
 {
-    private Animator _animator;
-    private ParticleSystem _jetParticles;
-    
+    [SerializeField] private Animator _animator;
+    [SerializeField] private ParticleSystem _jetParticles;
+    [SerializeField] private AudioSource _footstepAudio; // AudioSource для звука шагов
+
     private readonly int IsRunningKey = Animator.StringToHash("IsRunning");
     private readonly int IsDeathKey = Animator.StringToHash("IsDeath");
     private readonly int IsJumping = Animator.StringToHash("IsJumping");
     private readonly int HitKey = Animator.StringToHash("Hit");
     private readonly int InjuredLayer = 1;
 
-
-    public PlayerView(Animator animator, ParticleSystem particles)
+    private void OnEnable()
     {
-        _animator = animator;
-        _jetParticles = particles;
+        PlayerController player = GetComponent<PlayerController>();
+        player.OnDeath += Death;
+        player.OnJumpByNavmeshLink += JumpByNavmeshLink;
+        player.OnStopJumpByNavMesh += StopJumpByNavMesh;
+        player.OnStartRunning += StartRunning;
+        player.OnStopRunning += StopRunning;
+        player.OnHit += Hit;
+        player.OnSwitchLayerToInjured += SwitchLayerToInjured;
     }
 
-    public void StartRunning() => _animator.SetBool(IsRunningKey, true);
+    private void OnDisable()
+    {
+        PlayerController player = GetComponent<PlayerController>();
+        player.OnDeath -= Death;
+        player.OnJumpByNavmeshLink -= JumpByNavmeshLink;
+        player.OnStopJumpByNavMesh -= StopJumpByNavMesh;
+        player.OnStartRunning -= StartRunning;
+        player.OnStopRunning -= StopRunning;
+        player.OnHit -= Hit;
+        player.OnSwitchLayerToInjured -= SwitchLayerToInjured;
+    }
 
-    public void StopRunning() => _animator.SetBool(IsRunningKey, false);
+    public void StartRunning()
+    {
+        _animator.SetBool(IsRunningKey, true);
+        if (_footstepAudio != null && !_footstepAudio.isPlaying)
+        {
+            _footstepAudio.Play(); // Проигрываем звук шагов
+        }
+    }
+
+    public void StopRunning()
+    {
+        _animator.SetBool(IsRunningKey, false);
+        if (_footstepAudio != null && _footstepAudio.isPlaying)
+        {
+            _footstepAudio.Stop(); // Останавливаем звук шагов
+        }
+    }
 
     public void Death() => _animator.SetBool(IsDeathKey, true);
 
@@ -37,7 +68,7 @@ public class PlayerView
     {
         _animator.SetBool(IsJumping, false);
         _jetParticles.Stop();
-    } 
+    }
 
     public void SwitchLayerToInjured() => _animator.SetLayerWeight(InjuredLayer, 1);
 

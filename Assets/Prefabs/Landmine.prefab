@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3056600692353647523}
   - component: {fileID: 7551376815301646677}
   - component: {fileID: 764332311729828444}
+  - component: {fileID: 2455732676225718733}
   m_Layer: 0
   m_Name: Landmine
   m_TagString: Untagged
@@ -95,11 +96,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abc0288d829435e498e597174220d568, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _activationRadius: 3
-  _explosionRadius: 2
-  _explosionDelay: 2
+  _activationRadius: 2
+  _explosionRadius: 3
+  _explosionDelay: 1
   _damage: 40
-  _explosionVFXPrefab: {fileID: 7973178220682483453, guid: 011c832bd03e9fd46b99c4f402b91dd2,
+--- !u!114 &2455732676225718733
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1923379555245846805}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4585c06a7248c741835f5168cf570d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _explosionVFX: {fileID: 7973178220682483453, guid: 011c832bd03e9fd46b99c4f402b91dd2,
+    type: 3}
+  _explosionSoundPrefab: {fileID: 1318215816092979872, guid: b4d0c519f5000694fbb8fafb926378bb,
     type: 3}
 --- !u!1001 &439979839248660933
 PrefabInstance:

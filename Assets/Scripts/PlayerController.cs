@@ -3,22 +3,27 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Player : MonoBehaviour, IDamageble
+public class PlayerController : MonoBehaviour, IDamageble
 {
+    public event Action OnDeath;
+    public event Action OnJumpByNavmeshLink;
+    public event Action OnStopJumpByNavMesh;
+    public event Action OnStartRunning;
+    public event Action OnStopRunning;
+    public event Action OnHit;
+    public event Action OnSwitchLayerToInjured;
+
     [SerializeField] private float _healthValue = 100;
     [SerializeField] private float _idleTimeThreshold = 5f;
     [SerializeField] private float _patrolRadius = 10f;
     [SerializeField] private float _maxNavMeshSampleDistance = 2f;
     [SerializeField] private int _attemptOfPatrol = 10;
     [SerializeField] private float _degreeOfInjury = 0.3f;
-    [SerializeField] private Animator _animator;
-    [SerializeField] private ParticleSystem _jetParticles;
-    [SerializeField] private float baseTraversalSpeed = 2.0f;  // Базовая скорость для прохождения линка
-    [SerializeField] private AnimationCurve jumpCurve = AnimationCurve.EaseInOut(0, 0, 1, 1); // Кривая высоты прыжка
+    [SerializeField] private float baseTraversalSpeed = 2.0f;
+    [SerializeField] private AnimationCurve jumpCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
     private InputController _inputController;
     private NavMeshAgent _agent;
-    private PlayerView _playerView;
     private PlayerAI _playerAI;
 
     private float _idleTimer = 0f;
@@ -32,7 +37,6 @@ public class Player : MonoBehaviour, IDamageble
     {
         _inputController = FindObjectOfType<InputController>();
         _agent = GetComponent<NavMeshAgent>();
-        _playerView = new PlayerView(_animator, _jetParticles);
         Health = new Health(_healthValue);
         Health.IsDead += Death;
         _inputController.OnNavMeshPointSelected += MoveToTargetPoint;
@@ -43,13 +47,12 @@ public class Player : MonoBehaviour, IDamageble
     {
         IsDead = true;
         AgentStop();
-        _playerView.Death();
+        OnDeath?.Invoke(); // Триггерим событие смерти
     }
 
     private void OnDestroy()
     {
         _inputController.OnNavMeshPointSelected -= MoveToTargetPoint;
-
         if (_traverseNavMeshLink != null)
         {
             StopCoroutine(_traverseNavMeshLink);
@@ -77,7 +80,7 @@ public class Player : MonoBehaviour, IDamageble
 
     private IEnumerator TraverseNavMeshLink()
     {
-        _playerView.JumpByNavmeshLink();
+        OnJumpByNavmeshLink?.Invoke(); // Событие начала прыжка
         OffMeshLinkData linkData = _agent.currentOffMeshLinkData;
         Vector3 startPos = linkData.startPos;
         Vector3 endPos = linkData.endPos + Vector3.up * _agent.baseOffset;
@@ -106,12 +109,11 @@ public class Player : MonoBehaviour, IDamageble
             yield return null;
         }
 
-        _playerView.StopJumpByNavMesh();
+        OnStopJumpByNavMesh?.Invoke(); // Событие завершения прыжка
         _agent.CompleteOffMeshLink();
         _agent.transform.position = endPos;
         _agent.isStopped = false;
         _traverseNavMeshLink = null;
-
     }
 
     public void UpdateMovementState()
@@ -120,7 +122,7 @@ public class Player : MonoBehaviour, IDamageble
         {
             if (!_agent.hasPath || _agent.velocity.sqrMagnitude == 0f)
             {
-                _playerView.StopRunning();
+                OnStopRunning?.Invoke(); // Событие остановки бега
                 _idleTimer += Time.deltaTime;
 
                 if (_idleTimer >= _idleTimeThreshold && !_isPatrolling)
@@ -149,7 +151,7 @@ public class Player : MonoBehaviour, IDamageble
         if (!IsDead)
         {
             _agent.SetDestination(point);
-            _playerView.StartRunning();
+            OnStartRunning?.Invoke(); // Событие начала бега
             _idleTimer = 0f;
             _isPatrolling = false;
         }
@@ -160,7 +162,7 @@ public class Player : MonoBehaviour, IDamageble
         if (_playerAI.TryGetRandomPoint(out Vector3 randomPoint))
         {
             _agent.SetDestination(randomPoint);
-            _playerView.StartRunning();
+            OnStartRunning?.Invoke(); // Событие начала бега
         }
         else
         {
@@ -171,9 +173,9 @@ public class Player : MonoBehaviour, IDamageble
     public void TakeDamage(float damage)
     {
         Health.ChangeHealthValue(-damage);
-        _playerView.Hit();
+        OnHit?.Invoke(); // Событие попадания
 
         if (Health.HealthValue / Health.MaxHealth <= _degreeOfInjury)
-            _playerView.SwitchLayerToInjured();
+            OnSwitchLayerToInjured?.Invoke(); // Событие серьезного повреждения
     }
 }
