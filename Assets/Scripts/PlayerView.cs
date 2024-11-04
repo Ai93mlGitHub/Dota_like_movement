@@ -12,47 +12,42 @@ public class PlayerView : MonoBehaviour
     private readonly int HitKey = Animator.StringToHash("Hit");
     private readonly int InjuredLayer = 1;
 
+    private PlayerController _playerController;
+
     private void OnEnable()
     {
-        PlayerController player = GetComponent<PlayerController>();
-        player.OnDeath += Death;
-        player.OnJumpByNavmeshLink += JumpByNavmeshLink;
-        player.OnStopJumpByNavMesh += StopJumpByNavMesh;
-        player.OnStartRunning += StartRunning;
-        player.OnStopRunning += StopRunning;
-        player.OnHit += Hit;
-        player.OnSwitchLayerToInjured += SwitchLayerToInjured;
+        _playerController = FindObjectOfType<PlayerController>();
+        if (_playerController != null)
+        {
+            _playerController.OnDeath += Death;
+            _playerController.OnJumpByNavmeshLink += JumpByNavmeshLink;
+            _playerController.OnStopJumpByNavMesh += StopJumpByNavMesh;
+            _playerController.OnStartRunning += StartRunning;
+            _playerController.OnStopRunning += StopRunning;
+            _playerController.OnHit += Hit;
+            _playerController.OnSwitchLayerToInjured += SwitchLayerToInjured;
+        }
     }
 
     private void OnDisable()
     {
-        PlayerController player = GetComponent<PlayerController>();
-        player.OnDeath -= Death;
-        player.OnJumpByNavmeshLink -= JumpByNavmeshLink;
-        player.OnStopJumpByNavMesh -= StopJumpByNavMesh;
-        player.OnStartRunning -= StartRunning;
-        player.OnStopRunning -= StopRunning;
-        player.OnHit -= Hit;
-        player.OnSwitchLayerToInjured -= SwitchLayerToInjured;
-    }
-
-    public void StartRunning()
-    {
-        _animator.SetBool(IsRunningKey, true);
-        if (_footstepAudio != null && !_footstepAudio.isPlaying)
+        if (_playerController != null)
         {
-            _footstepAudio.Play(); // Проигрываем звук шагов
+            _playerController.OnDeath -= Death;
+            _playerController.OnJumpByNavmeshLink -= JumpByNavmeshLink;
+            _playerController.OnStopJumpByNavMesh -= StopJumpByNavMesh;
+            _playerController.OnStartRunning -= StartRunning;
+            _playerController.OnStopRunning -= StopRunning;
+            _playerController.OnHit -= Hit;
+            _playerController.OnSwitchLayerToInjured -= SwitchLayerToInjured;
         }
     }
 
-    public void StopRunning()
-    {
-        _animator.SetBool(IsRunningKey, false);
-        if (_footstepAudio != null && _footstepAudio.isPlaying)
-        {
-            _footstepAudio.Stop(); // Останавливаем звук шагов
-        }
-    }
+    public void StartRunning() => _animator.SetBool(IsRunningKey, true);
+
+    public void StopRunning() => _animator.SetBool(IsRunningKey, false);
+
+    public void FootstepSound() => _footstepAudio.Play();
 
     public void Death() => _animator.SetBool(IsDeathKey, true);
 
